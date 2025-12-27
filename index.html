@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dr. Cache - Site Memory Helper Bookmarklet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .header img {
+            max-width: 150px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .section h2 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .section h3 {
+            color: #764ba2;
+            font-size: 1.3em;
+            margin: 20px 0 10px 0;
+        }
+        
+        .bookmarklet-container {
+            background: #f8f9fa;
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .bookmarklet-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 40px;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: move;
+            user-select: none;
+        }
+        
+        .bookmarklet-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        .bookmarklet-link:active {
+            transform: translateY(0);
+        }
+        
+        .instructions {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .instructions ol, .instructions ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+        
+        .instructions li {
+            margin: 8px 0;
+        }
+        
+        .browser-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .browser-tab {
+            padding: 10px 20px;
+            background: #e9ecef;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .browser-tab:hover {
+            background: #dee2e6;
+        }
+        
+        .browser-tab.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .browser-instructions {
+            display: none;
+        }
+        
+        .browser-instructions.active {
+            display: block;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .feature-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .feature-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin: 15px 0;
+            position: relative;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8em;
+        }
+        
+        .copy-btn:hover {
+            background: #764ba2;
+        }
+        
+        .alert {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .footer {
+            background: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            color: #666;
+        }
+        
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .bookmarklet-link {
+                padding: 15px 25px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="drcache.png" alt="Dr. Cache Logo">
+            <h1>Dr. Cache</h1>
+            <p>Site Memory Helper - Clear cookies, cache, and storage with one click</p>
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <h2>🚀 Quick Start</h2>
+                <div class="bookmarklet-container">
+                    <p style="font-size: 1.1em; margin-bottom: 20px; font-weight: 500;">
+                        Drag this button to your bookmarks bar:
+                    </p>
+                    <a href="javascript:(async()=>{const d=document,w=window;let s={ls:0,ss:0,c:0,sw:0,idb:0,ck:0,est:null};try{s.ls=Object.keys(localStorage).length}catch{}try{s.ss=Object.keys(sessionStorage).length}catch{}try{if('caches'in w)s.c=(await caches.keys()).length}catch{}try{if('serviceWorker'in navigator)s.sw=(await navigator.serviceWorker.getRegistrations()).length}catch{}try{if(indexedDB.databases)s.idb=(await indexedDB.databases()).length}catch{}try{if(document.cookie&&document.cookie.trim())s.ck=document.cookie.split(';').filter(c=>c.trim()).length;else s.ck=0}catch{s.ck=0}try{if(navigator.storage?.estimate)s.est=await navigator.storage.estimate()}catch{}async function clearCookies(){if(!document.cookie||document.cookie.trim()==='')return;const cookies=document.cookie.split(';');for(const c of cookies){const trimmed=c.trim();if(!trimmed)continue;const n=trimmed.split('=')[0].trim();if(!n)continue;for(const dmn of[location.hostname,'.'+location.hostname]){const paths=['/',location.pathname];for(const path of paths){document.cookie=n+'=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path='+path+'; domain='+dmn;document.cookie=n+'=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path='+path}}}}const css='position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,.86);color:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding:24px;overflow:auto;',box='max-width:880px;margin:0 auto;background:#111;border-radius:14px;padding:22px;box-shadow:0 0 0 1px #333';const row=(a,b)=>`<div style='display:flex;justify-content:space-between;margin:6px 0;opacity:.9'><div>${a}</div><div style='opacity:.7'>${b}</div></div>`;const chk=(i,l,d,x)=>`<label style='display:block;margin:12px 0;opacity:${x?.5:1}'><input type='checkbox' id='${i}' ${x?'disabled':''} style='margin-right:8px'><strong>${l}</strong><div style='font-size:13px;opacity:.75;margin-left:22px'>${d}</div></label>`;function getBrowserInstructions(){const ua=navigator.userAgent;const isChrome=/Chrome|Chromium|Brave|Edg|Opera/i.test(ua)&&!/Firefox|Safari/i.test(ua);const isFirefox=/Firefox/i.test(ua);const isSafari=/Safari/i.test(ua)&&!/Chrome|Chromium|Edg|Firefox/i.test(ua);if(isChrome){return`<strong>Chrome/Edge/Brave:</strong>
+1. Right-click anywhere on the page
+2. Select 'Inspect' (or press F12)
+3. Click the 'Application' tab at the top
+4. In the left sidebar, find 'Storage'
+5. Click 'Clear site data' button at the top
+6. Or manually clear:
+   - Cookies: Expand 'Cookies' → Right-click domain → 'Clear'
+   - Cache Storage: Expand 'Cache Storage' → Right-click each entry → 'Delete'
+   - Local Storage: Expand 'Local Storage' → Right-click domain → 'Clear'
+   - IndexedDB: Expand 'IndexedDB' → Right-click database → 'Delete Database'
+`}else if(isFirefox){return`<strong>Firefox:</strong>
+1. Right-click anywhere on the page
+2. Select 'Inspect' (or press F12)
+3. Click the 'Storage' tab at the top
+4. Expand each section and right-click to delete:
+   - Cookies: Right-click cookie → 'Delete'
+   - Cache Storage: Right-click cache → 'Delete'
+   - Local Storage: Right-click domain → 'Delete All'
+   - IndexedDB: Right-click database → 'Delete Database'
+5. Or use: Menu → Settings → Privacy → Cookies and Site Data → 'Clear Data'
+`}else if(isSafari){return`<strong>Safari:</strong>
+1. Enable Developer menu: Safari → Settings → Advanced → 'Show features for web developers'
+2. Right-click on the page → 'Inspect Element'
+3. Click the 'Storage' tab
+4. Expand sections and delete items:
+   - Cookies: Right-click → 'Delete'
+   - Local Storage: Right-click → 'Delete All'
+   - IndexedDB: Right-click → 'Delete Database'
+5. Or use: Safari → Settings → Privacy → 'Manage Website Data' → Remove site
+`}else{return`<strong>General Instructions:</strong>
+1. Right-click on the page and select 'Inspect' or 'Inspect Element'
+2. Look for tabs like 'Application', 'Storage', or 'Debugger'
+3. Find sections for Cookies, Cache, Local Storage, and IndexedDB
+4. Right-click on items to delete them
+5. Or use your browser's settings menu to clear site data
+`}}const o=d.createElement('div');o.style.cssText=css;o.innerHTML=`<div style='${box}'><div style='display:flex;justify-content:space-between;align-items:center'><div style='font-size:22px;font-weight:700'>Site Memory Helper</div><button id='x' style='background:none;border:none;color:#aaa;font-size:22px;cursor:pointer'>×</button></div><div style='margin-top:8px;opacity:.85'>Nothing has been cleared yet. Choose what to clean.</div><div style='margin-top:18px' id='stats'></div><div style='margin-top:18px;border-top:1px solid #333;padding-top:16px'>${chk('l','Clear localStorage','Small saved values used by the site.',s.ls===0)}${chk('s','Clear sessionStorage','Temporary tab memory.',s.ss===0)}${chk('c','Delete Cache Storage','Stored network responses.',s.c===0)}${chk('w','Unregister service workers','Background logic that can keep old behavior.',s.sw===0)}${chk('k','Attempt to clear cookies','Only cookies browsers allow scripts to remove.',s.ck===0)}</div><button id='run' style='margin-top:16px;background:#fff;color:#000;border:none;border-radius:10px;padding:10px 16px;font-size:15px;cursor:pointer'>Clear selected</button><div id='out' style='margin-top:16px;opacity:.9'></div><div style='margin-top:22px;border-top:1px solid #333;padding-top:14px'><div style='font-weight:600;margin-bottom:6px'>Why some cookies and cache may remain</div><div style='opacity:.85;font-size:14px;line-height:1.45;margin-bottom:12px'>Browsers protect certain cookies and cache for safety. Scripts can only remove a subset. To fully clear everything, use your browser's developer tools with the instructions below.</div><div style='background:#000;padding:14px;border-radius:8px;font-size:13px;line-height:1.6;white-space:pre-wrap;font-family:monospace'>${getBrowserInstructions()}</div></div><div style='margin-top:14px;font-size:12px;opacity:.6'>Runs locally. No tracking. No network.</div></div>`;if(d.body){d.body.appendChild(o)}else{const addOverlay=()=>{if(d.body)d.body.appendChild(o)};if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',addOverlay);else setTimeout(addOverlay,0)}o.querySelector('#x').onclick=()=>o.remove();async function updateStats(){let cachesCount=0,swCount=0,idbCount=0;if('caches'in w)try{cachesCount=(await caches.keys()).length}catch{}if(navigator.serviceWorker)try{swCount=(await navigator.serviceWorker.getRegistrations()).length}catch{}if(indexedDB.databases)try{idbCount=(await indexedDB.databases()).length}catch{}const stats=d.getElementById('stats');let lsCount=0,ssCount=0,cookieCount=0;try{lsCount=localStorage.length}catch{lsCount=0}try{ssCount=sessionStorage.length}catch{ssCount=0}try{cookieCount=document.cookie&&document.cookie.trim()?document.cookie.split(';').filter(c=>c.trim()).length:0}catch{cookieCount=0}stats.innerHTML=row('localStorage items',lsCount)+row('sessionStorage items',ssCount)+row('Cache Storage entries',cachesCount)+row('Service workers',swCount)+row('IndexedDB databases',idbCount)+row('Cookies (visible)',cookieCount)}updateStats();o.querySelector('#run').onclick=async()=>{let log=[];if(d.getElementById('l').checked)try{localStorage.clear();log.push('localStorage cleared')}catch{log.push('localStorage failed')}if(d.getElementById('s').checked)try{sessionStorage.clear();log.push('sessionStorage cleared')}catch{log.push('sessionStorage failed')}if(d.getElementById('c').checked)try{for(const k of await caches.keys())await caches.delete(k);log.push('Cache Storage cleared')}catch{log.push('Cache Storage failed')}if(d.getElementById('w').checked)try{for(const r of await navigator.serviceWorker.getRegistrations())await r.unregister();log.push('Service workers unregistered')}catch{log.push('Service workers failed')}if(d.getElementById('k').checked)try{await clearCookies();log.push('Cookie cleanup attempted')}catch{log.push('Cookie cleanup failed')}const outDiv=o.querySelector('#out');if(log.length===0)outDiv.innerHTML='<div style=\'margin-top:8px;opacity:.7\'>No items selected for clearing.</div>';else outDiv.innerHTML='<div style=\'margin-top:8px\'><strong>Results:</strong><br>'+log.map(x=>'• '+x).join('<br>')+'</div>';await updateStats()}})();" 
+                        id="bookmarklet" 
+                        class="bookmarklet-link" 
+                        draggable="true">
+                        📚 Dr. Cache
+                    </a>
+                    <p style="margin-top: 20px; color: #666; font-size: 0.95em;">
+                        Don't see your bookmarks bar? See instructions below ↓
+                    </p>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>📖 Installation Instructions</h2>
+                
+                <div class="browser-tabs">
+                    <div class="browser-tab active" onclick="showBrowser('chrome')">Chrome/Edge/Brave</div>
+                    <div class="browser-tab" onclick="showBrowser('firefox')">Firefox</div>
+                    <div class="browser-tab" onclick="showBrowser('safari')">Safari</div>
+                    <div class="browser-tab" onclick="showBrowser('manual')">Manual Method</div>
+                </div>
+                
+                <div id="chrome" class="browser-instructions active">
+                    <h3>Chrome, Edge, or Brave</h3>
+                    <div class="instructions">
+                        <h4>Method 1: Drag & Drop (Easiest)</h4>
+                        <ol>
+                            <li>Make sure your bookmarks bar is visible:
+                                <ul>
+                                    <li>Press <strong>Ctrl+Shift+B</strong> (Windows/Linux) or <strong>Cmd+Shift+B</strong> (Mac)</li>
+                                    <li>Or: Click the three dots menu → Bookmarks → Show bookmarks bar</li>
+                                </ul>
+                            </li>
+                            <li>Drag the "📚 Dr. Cache" button above to your bookmarks bar</li>
+                            <li>Done! Click it on any website to use it</li>
+                        </ol>
+                        
+                        <h4>Method 2: Bookmark Manager (If bookmarks bar is hidden)</h4>
+                        <ol>
+                            <li>Press <strong>Ctrl+Shift+O</strong> (Windows/Linux) or <strong>Cmd+Option+B</strong> (Mac) to open Bookmark Manager</li>
+                            <li>Click the three dots menu (⋮) in the top right</li>
+                            <li>Select "Add new bookmark"</li>
+                            <li>Name: <code>Dr. Cache</code></li>
+                            <li>URL: Copy the entire code from the "Manual Method" tab below</li>
+                            <li>Click "Save"</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div id="firefox" class="browser-instructions">
+                    <h3>Firefox</h3>
+                    <div class="instructions">
+                        <h4>Method 1: Drag & Drop (Easiest)</h4>
+                        <ol>
+                            <li>Make sure your bookmarks toolbar is visible:
+                                <ul>
+                                    <li>Right-click the toolbar → Check "Bookmarks Toolbar"</li>
+                                    <li>Or: Press <strong>Ctrl+Shift+B</strong> (Windows/Linux) or <strong>Cmd+Shift+B</strong> (Mac)</li>
+                                </ul>
+                            </li>
+                            <li>Drag the "📚 Dr. Cache" button above to your bookmarks toolbar</li>
+                            <li>Done! Click it on any website to use it</li>
+                        </ol>
+                        
+                        <h4>Method 2: Bookmark Manager</h4>
+                        <ol>
+                            <li>Press <strong>Ctrl+Shift+O</strong> (Windows/Linux) or <strong>Cmd+Shift+O</strong> (Mac) to open Library</li>
+                            <li>Click "Bookmarks" in the sidebar</li>
+                            <li>Right-click "Bookmarks Toolbar" → "New Bookmark"</li>
+                            <li>Name: <code>Dr. Cache</code></li>
+                            <li>Location: Copy the entire code from the "Manual Method" tab below</li>
+                            <li>Click "Add"</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div id="safari" class="browser-instructions">
+                    <h3>Safari</h3>
+                    <div class="instructions">
+                        <h4>Method 1: Drag & Drop</h4>
+                        <ol>
+                            <li>Make sure your bookmarks bar is visible:
+                                <ul>
+                                    <li>Press <strong>Cmd+Shift+B</strong></li>
+                                    <li>Or: View → Show Bookmarks Bar</li>
+                                </ul>
+                            </li>
+                            <li>Drag the "📚 Dr. Cache" button above to your bookmarks bar</li>
+                            <li>Done! Click it on any website to use it</li>
+                        </ol>
+                        
+                        <h4>Method 2: Add Bookmark Manually</h4>
+                        <ol>
+                            <li>Go to Bookmarks → Edit Bookmarks (or press <strong>Cmd+Option+B</strong>)</li>
+                            <li>Select where you want to add it (e.g., Favorites Bar)</li>
+                            <li>Right-click → "New Bookmark"</li>
+                            <li>Name: <code>Dr. Cache</code></li>
+                            <li>Address: Copy the entire code from the "Manual Method" tab below</li>
+                            <li>Click "Add"</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div id="manual" class="browser-instructions">
+                    <h3>Manual Method (All Browsers)</h3>
+                    <div class="instructions">
+                        <p>If you can't drag the button or prefer to do it manually:</p>
+                        <ol>
+                            <li>Open your browser's bookmark manager:
+                                <ul>
+                                    <li><strong>Chrome/Edge:</strong> <code>Ctrl+Shift+O</code> (Windows) or <code>Cmd+Option+B</code> (Mac)</li>
+                                    <li><strong>Firefox:</strong> <code>Ctrl+Shift+O</code> (Windows) or <code>Cmd+Shift+O</code> (Mac)</li>
+                                    <li><strong>Safari:</strong> <code>Cmd+Option+B</code></li>
+                                    <li><strong>Or:</strong> Look in your browser menu for "Bookmarks" → "Bookmark Manager" or "Show All Bookmarks"</li>
+                                </ul>
+                            </li>
+                            <li>Create a new bookmark</li>
+                            <li>Name it: <code>Dr. Cache</code> (or anything you prefer)</li>
+                            <li>In the URL/Address field, paste this entire code:</li>
+                        </ol>
+                        
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyBookmarklet()">Copy Code</button>
+                            <div id="bookmarklet-code">javascript:(async()=>{const d=document,w=window;let s={ls:0,ss:0,c:0,sw:0,idb:0,ck:0,est:null};try{s.ls=Object.keys(localStorage).length}catch{}try{s.ss=Object.keys(sessionStorage).length}catch{}try{if("caches"in w)s.c=(await caches.keys()).length}catch{}try{if("serviceWorker"in navigator)s.sw=(await navigator.serviceWorker.getRegistrations()).length}catch{}try{if(indexedDB.databases)s.idb=(await indexedDB.databases()).length}catch{}try{if(document.cookie&&document.cookie.trim())s.ck=document.cookie.split(";").filter(c=>c.trim()).length;else s.ck=0}catch{s.ck=0}try{if(navigator.storage?.estimate)s.est=await navigator.storage.estimate()}catch{}async function clearCookies(){if(!document.cookie||document.cookie.trim()==="")return;const cookies=document.cookie.split(";");for(const c of cookies){const trimmed=c.trim();if(!trimmed)continue;const n=trimmed.split("=")[0].trim();if(!n)continue;for(const dmn of[location.hostname,"."+location.hostname]){const paths=["/",location.pathname];for(const path of paths){document.cookie=n+"=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path="+path+"; domain="+dmn;document.cookie=n+"=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path="+path}}}}const css="position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,.86);color:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding:24px;overflow:auto;",box="max-width:880px;margin:0 auto;background:#111;border-radius:14px;padding:22px;box-shadow:0 0 0 1px #333";const row=(a,b)=>`<div style="display:flex;justify-content:space-between;margin:6px 0;opacity:.9"><div>${a}</div><div style="opacity:.7">${b}</div></div>`;const chk=(i,l,d,x)=>`<label style="display:block;margin:12px 0;opacity:${x?.5:1}"><input type="checkbox" id="${i}" ${x?"disabled":""} style="margin-right:8px"><strong>${l}</strong><div style="font-size:13px;opacity:.75;margin-left:22px">${d}</div></label>`;function getBrowserInstructions(){const ua=navigator.userAgent;const isChrome=/Chrome|Chromium|Brave|Edg|Opera/i.test(ua)&&!/Firefox|Safari/i.test(ua);const isFirefox=/Firefox/i.test(ua);const isSafari=/Safari/i.test(ua)&&!/Chrome|Chromium|Edg|Firefox/i.test(ua);if(isChrome){return`<strong>Chrome/Edge/Brave:</strong>
+1. Right-click anywhere on the page
+2. Select "Inspect" (or press F12)
+3. Click the "Application" tab at the top
+4. In the left sidebar, find "Storage"
+5. Click "Clear site data" button at the top
+6. Or manually clear:
+   - Cookies: Expand "Cookies" → Right-click domain → "Clear"
+   - Cache Storage: Expand "Cache Storage" → Right-click each entry → "Delete"
+   - Local Storage: Expand "Local Storage" → Right-click domain → "Clear"
+   - IndexedDB: Expand "IndexedDB" → Right-click database → "Delete Database"
+`}else if(isFirefox){return`<strong>Firefox:</strong>
+1. Right-click anywhere on the page
+2. Select "Inspect" (or press F12)
+3. Click the "Storage" tab at the top
+4. Expand each section and right-click to delete:
+   - Cookies: Right-click cookie → "Delete"
+   - Cache Storage: Right-click cache → "Delete"
+   - Local Storage: Right-click domain → "Delete All"
+   - IndexedDB: Right-click database → "Delete Database"
+5. Or use: Menu → Settings → Privacy → Cookies and Site Data → "Clear Data"
+`}else if(isSafari){return`<strong>Safari:</strong>
+1. Enable Developer menu: Safari → Settings → Advanced → "Show features for web developers"
+2. Right-click on the page → "Inspect Element"
+3. Click the "Storage" tab
+4. Expand sections and delete items:
+   - Cookies: Right-click → "Delete"
+   - Local Storage: Right-click → "Delete All"
+   - IndexedDB: Right-click → "Delete Database"
+5. Or use: Safari → Settings → Privacy → "Manage Website Data" → Remove site
+`}else{return`<strong>General Instructions:</strong>
+1. Right-click on the page and select "Inspect" or "Inspect Element"
+2. Look for tabs like "Application", "Storage", or "Debugger"
+3. Find sections for Cookies, Cache, Local Storage, and IndexedDB
+4. Right-click on items to delete them
+5. Or use your browser's settings menu to clear site data
+`}}const o=d.createElement("div");o.style.cssText=css;o.innerHTML=`<div style="${box}"><div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:22px;font-weight:700">Site Memory Helper</div><button id="x" style="background:none;border:none;color:#aaa;font-size:22px;cursor:pointer">×</button></div><div style="margin-top:8px;opacity:.85">Nothing has been cleared yet. Choose what to clean.</div><div style="margin-top:18px" id="stats"></div><div style="margin-top:18px;border-top:1px solid #333;padding-top:16px">${chk("l","Clear localStorage","Small saved values used by the site.",s.ls===0)}${chk("s","Clear sessionStorage","Temporary tab memory.",s.ss===0)}${chk("c","Delete Cache Storage","Stored network responses.",s.c===0)}${chk("w","Unregister service workers","Background logic that can keep old behavior.",s.sw===0)}${chk("k","Attempt to clear cookies","Only cookies browsers allow scripts to remove.",s.ck===0)}</div><button id="run" style="margin-top:16px;background:#fff;color:#000;border:none;border-radius:10px;padding:10px 16px;font-size:15px;cursor:pointer">Clear selected</button><div id="out" style="margin-top:16px;opacity:.9"></div><div style="margin-top:22px;border-top:1px solid #333;padding-top:14px"><div style="font-weight:600;margin-bottom:6px">Why some cookies and cache may remain</div><div style="opacity:.85;font-size:14px;line-height:1.45;margin-bottom:12px">Browsers protect certain cookies and cache for safety. Scripts can only remove a subset. To fully clear everything, use your browser's developer tools with the instructions below.</div><div style="background:#000;padding:14px;border-radius:8px;font-size:13px;line-height:1.6;white-space:pre-wrap;font-family:monospace">${getBrowserInstructions()}</div></div><div style="margin-top:14px;font-size:12px;opacity:.6">Runs locally. No tracking. No network.</div></div>`;if(d.body){d.body.appendChild(o)}else{const addOverlay=()=>{if(d.body)d.body.appendChild(o)};if(d.readyState==="loading")d.addEventListener("DOMContentLoaded",addOverlay);else setTimeout(addOverlay,0)}o.querySelector("#x").onclick=()=>o.remove();async function updateStats(){let cachesCount=0,swCount=0,idbCount=0;if("caches"in w)try{cachesCount=(await caches.keys()).length}catch{}if(navigator.serviceWorker)try{swCount=(await navigator.serviceWorker.getRegistrations()).length}catch{}if(indexedDB.databases)try{idbCount=(await indexedDB.databases()).length}catch{}const stats=d.getElementById("stats");let lsCount=0,ssCount=0,cookieCount=0;try{lsCount=localStorage.length}catch{lsCount=0}try{ssCount=sessionStorage.length}catch{ssCount=0}try{cookieCount=document.cookie&&document.cookie.trim()?document.cookie.split(";").filter(c=>c.trim()).length:0}catch{cookieCount=0}stats.innerHTML=row("localStorage items",lsCount)+row("sessionStorage items",ssCount)+row("Cache Storage entries",cachesCount)+row("Service workers",swCount)+row("IndexedDB databases",idbCount)+row("Cookies (visible)",cookieCount)}updateStats();o.querySelector("#run").onclick=async()=>{let log=[];if(d.getElementById("l").checked)try{localStorage.clear();log.push("localStorage cleared")}catch{log.push("localStorage failed")}if(d.getElementById("s").checked)try{sessionStorage.clear();log.push("sessionStorage cleared")}catch{log.push("sessionStorage failed")}if(d.getElementById("c").checked)try{for(const k of await caches.keys())await caches.delete(k);log.push("Cache Storage cleared")}catch{log.push("Cache Storage failed")}if(d.getElementById("w").checked)try{for(const r of await navigator.serviceWorker.getRegistrations())await r.unregister();log.push("Service workers unregistered")}catch{log.push("Service workers failed")}if(d.getElementById("k").checked)try{await clearCookies();log.push("Cookie cleanup attempted")}catch{log.push("Cookie cleanup failed")}const outDiv=o.querySelector("#out");if(log.length===0)outDiv.innerHTML="<div style='margin-top:8px;opacity:.7'>No items selected for clearing.</div>";else outDiv.innerHTML="<div style='margin-top:8px'><strong>Results:</strong><br>"+log.map(x=>"• "+x).join("<br>")+"</div>";await updateStats()}})();</div>
+                        <p style="margin-top: 15px; color: #666; font-size: 0.9em;">
+                            <strong>Important:</strong> Make sure to copy the ENTIRE code, starting with <code>javascript:</code> and ending with <code>})();</code>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>✨ Features</h2>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4>🔍 Detects All Storage</h4>
+                        <p>Automatically finds and counts localStorage, sessionStorage, Cache Storage, Service Workers, IndexedDB, and Cookies</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>✅ Selective Clearing</h4>
+                        <p>Choose exactly what you want to clear with easy checkboxes</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>📊 Real-Time Updates</h4>
+                        <p>See counts update instantly after clearing operations</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>🔒 Privacy First</h4>
+                        <p>Runs 100% locally - no tracking, no network requests, no data collection</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>🌐 Cross-Browser</h4>
+                        <p>Works in Chrome, Firefox, Safari, Edge, Brave, and other modern browsers</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>📖 Helpful Instructions</h4>
+                        <p>Provides browser-specific instructions for manual clearing when needed</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>📝 How to Use</h2>
+                <div class="instructions">
+                    <ol>
+                        <li>Navigate to any website where you want to clear storage</li>
+                        <li>Click the "Dr. Cache" bookmarklet in your bookmarks bar</li>
+                        <li>A dark overlay will appear showing detected storage counts</li>
+                        <li>Select which storage types you want to clear (checkboxes)</li>
+                        <li>Click "Clear selected"</li>
+                        <li>Review the results and updated counts</li>
+                        <li>Close the overlay by clicking the × button</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>⚠️ Important Notes</h2>
+                <div class="alert">
+                    <strong>Browser Security:</strong> Some cookies may remain after clearing because browsers protect certain cookies (HttpOnly, Secure, SameSite attributes) for security reasons. The bookmarklet can only clear what browsers allow scripts to access.
+                </div>
+                <div class="alert">
+                    <strong>Complete Clearing:</strong> For complete clearing of all site data, use the browser-specific instructions provided in the tool, or use your browser's "Clear Site Data" feature in developer tools.
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>
+                <strong>Dr. Cache</strong> - Site Memory Helper Bookmarklet<br>
+                Open source project | 
+                <a href="https://github.com/zerosonesfun/drcache" target="_blank">View on GitHub</a>
+            </p>
+            <p style="margin-top: 10px; font-size: 0.9em;">
+                Made with ❤️ for privacy-conscious users
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        function showBrowser(browser) {
+            // Hide all instructions
+            document.querySelectorAll('.browser-instructions').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.browser-tab').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Show selected browser instructions
+            document.getElementById(browser).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+        
+        function copyBookmarklet() {
+            const code = document.getElementById('bookmarklet-code').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Copied!';
+                btn.style.background = '#28a745';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#667eea';
+                }, 2000);
+            }).catch(err => {
+                alert('Failed to copy. Please select and copy manually.');
+            });
+        }
+        
+        // Prevent default drag behavior and make it work as bookmarklet
+        document.getElementById('bookmarklet').addEventListener('dragstart', function(e) {
+            e.dataTransfer.setData('text/uri-list', this.href);
+            e.dataTransfer.setData('text/plain', this.href);
+        });
+    </script>
+</body>
+</html>
+
