@@ -520,8 +520,6 @@
                     link.href = code;
                     // Ensure text content is set for bookmark name - browsers use this
                     link.textContent = 'Dr. Cache';
-                    link.innerText = 'Dr. Cache'; // Also set innerText for compatibility
-                    // Set title attribute
                     link.title = 'Dr. Cache - Site Memory Helper';
                 }
                 
@@ -643,41 +641,28 @@
         
         // Set up drag-to-bookmark functionality
         function setupDragToBookmark() {
-            const bookmarkletLink = document.getElementById('bookmarklet');
-            if (!bookmarkletLink) return;
+            const link = document.getElementById('bookmarklet');
+            if (!link) return;
 
-            // Set the visible text immediately - must exist before drag starts
+            // Ensure the visible text is set — browsers use this for the bookmark name
             const bookmarkName = 'Dr. Cache';
-            bookmarkletLink.textContent = bookmarkName;
-            bookmarkletLink.title = 'Dr. Cache - Site Memory Helper';
-            
-            // Set href if not already set (should be set by loadBookmarkletCode)
-            if (!bookmarkletLink.href || bookmarkletLink.href === '#' || !bookmarkletLink.href.startsWith('javascript:')) {
-                // If code is loaded, use it; otherwise wait
-                if (bookmarkletCode && bookmarkletCode.startsWith('javascript:')) {
-                    bookmarkletLink.href = bookmarkletCode;
-                } else {
-                    // Code not loaded yet, will be set up when loadBookmarkletCode completes
-                    return;
-                }
-            }
+            link.textContent = bookmarkName;
+            link.title = 'Dr. Cache - Site Memory Helper';
 
-            // Remove previous dragstart listeners safely by cloning
-            const newLink = bookmarkletLink.cloneNode(true);
-            bookmarkletLink.parentNode.replaceChild(newLink, bookmarkletLink);
+            // Remove previous dragstart listeners safely
+            const newLink = link.cloneNode(true);
+            link.parentNode.replaceChild(newLink, link);
 
             newLink.addEventListener('dragstart', function(e) {
-                // URL for bookmark
+                // Bookmark URL
                 e.dataTransfer.setData('text/uri-list', this.href);
                 e.dataTransfer.setData('text/plain', this.href);
                 e.dataTransfer.effectAllowed = 'copy';
 
-                // Firefox: try to provide bookmark name
+                // Firefox-specific: include name
                 try {
                     e.dataTransfer.setData('text/x-moz-url', this.href + '\n' + bookmarkName);
-                } catch (err) {
-                    // Not Firefox or not supported
-                }
+                } catch (err) {}
             });
         }
     </script>
