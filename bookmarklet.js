@@ -235,7 +235,10 @@
   o.style.cssText = css;
   
   // Build the HTML content
-  o.innerHTML = `
+  // Note: Using try-catch for sites with strict CSP (like LinkedIn)
+  let htmlBuilt = false;
+  try {
+    o.innerHTML = `
     <div style="${box}">
       <!-- Header with close button -->
       <div style="display:flex;justify-content:space-between;align-items:center">
@@ -288,6 +291,116 @@ ${getBrowserInstructions()}
       </div>
     </div>
   `;
+    htmlBuilt = true;
+  } catch (e) {
+    // CSP blocked innerHTML - build DOM programmatically
+    const boxDiv = d.createElement("div");
+    boxDiv.style.cssText = box;
+    
+    // Header
+    const headerDiv = d.createElement("div");
+    headerDiv.style.cssText = "display:flex;justify-content:space-between;align-items:center";
+    const titleDiv = d.createElement("div");
+    titleDiv.style.cssText = "font-size:22px;font-weight:700";
+    titleDiv.textContent = "Site Memory Helper";
+    const closeBtn = d.createElement("button");
+    closeBtn.id = "x";
+    closeBtn.style.cssText = "background:none;border:none;color:#aaa;font-size:22px;cursor:pointer";
+    closeBtn.textContent = "×";
+    headerDiv.appendChild(titleDiv);
+    headerDiv.appendChild(closeBtn);
+    
+    // Subtitle
+    const subtitleDiv = d.createElement("div");
+    subtitleDiv.style.cssText = "margin-top:8px;opacity:.85";
+    subtitleDiv.textContent = "Nothing has been cleared yet. Choose what to clean.";
+    
+    // Stats
+    const statsDiv = d.createElement("div");
+    statsDiv.id = "stats";
+    statsDiv.style.cssText = "margin-top:18px";
+    
+    // Checkboxes container
+    const checkboxesDiv = d.createElement("div");
+    checkboxesDiv.style.cssText = "margin-top:18px;border-top:1px solid #333;padding-top:16px";
+    
+    // Create checkboxes programmatically
+    const checkboxData = [
+      {id: "l", label: "Clear localStorage", desc: "Small saved values used by the site.", disabled: s.ls === 0},
+      {id: "s", label: "Clear sessionStorage", desc: "Temporary tab memory.", disabled: s.ss === 0},
+      {id: "c", label: "Delete Cache Storage", desc: "Stored network responses.", disabled: s.c === 0},
+      {id: "w", label: "Unregister service workers", desc: "Background logic that can keep old behavior.", disabled: s.sw === 0},
+      {id: "k", label: "Attempt to clear cookies", desc: "Only cookies browsers allow scripts to remove.", disabled: s.ck === 0}
+    ];
+    
+    checkboxData.forEach(cb => {
+      const label = d.createElement("label");
+      label.style.cssText = `display:block;margin:12px 0;opacity:${cb.disabled ? 0.5 : 1}`;
+      const input = d.createElement("input");
+      input.type = "checkbox";
+      input.id = cb.id;
+      if (cb.disabled) input.disabled = true;
+      input.style.cssText = "margin-right:8px";
+      const strong = d.createElement("strong");
+      strong.textContent = cb.label;
+      const descDiv = d.createElement("div");
+      descDiv.style.cssText = "font-size:13px;opacity:.75;margin-left:22px";
+      descDiv.textContent = cb.desc;
+      label.appendChild(input);
+      label.appendChild(strong);
+      label.appendChild(descDiv);
+      checkboxesDiv.appendChild(label);
+    });
+    
+    // Clear button
+    const runBtn = d.createElement("button");
+    runBtn.id = "run";
+    runBtn.style.cssText = "margin-top:16px;background:#fff;color:#000;border:none;border-radius:10px;padding:10px 16px;font-size:15px;cursor:pointer";
+    runBtn.textContent = "Clear selected";
+    
+    // Output
+    const outDiv = d.createElement("div");
+    outDiv.id = "out";
+    outDiv.style.cssText = "margin-top:16px;opacity:.9";
+    
+    // Help section
+    const helpDiv = d.createElement("div");
+    helpDiv.style.cssText = "margin-top:22px;border-top:1px solid #333;padding-top:14px";
+    const helpTitle = d.createElement("div");
+    helpTitle.style.cssText = "font-weight:600;margin-bottom:6px";
+    helpTitle.textContent = "Why some cookies and cache may remain";
+    const helpText = d.createElement("div");
+    helpText.style.cssText = "opacity:.85;font-size:14px;line-height:1.45;margin-bottom:12px";
+    helpText.textContent = "Browsers protect certain cookies and cache for safety. Scripts can only remove a subset. To fully clear everything, use your browser's developer tools with the instructions below.";
+    const helpCode = d.createElement("div");
+    helpCode.style.cssText = "background:#000;padding:14px;border-radius:8px;font-size:13px;line-height:1.6;white-space:pre-wrap;font-family:monospace";
+    helpCode.textContent = getBrowserInstructions();
+    helpDiv.appendChild(helpTitle);
+    helpDiv.appendChild(helpText);
+    helpDiv.appendChild(helpCode);
+    
+    // Footer
+    const footerDiv = d.createElement("div");
+    footerDiv.style.cssText = "margin-top:14px;font-size:12px;opacity:.6";
+    footerDiv.textContent = "Runs locally. No tracking. No network.";
+    
+    // Assemble
+    boxDiv.appendChild(headerDiv);
+    boxDiv.appendChild(subtitleDiv);
+    boxDiv.appendChild(statsDiv);
+    boxDiv.appendChild(checkboxesDiv);
+    boxDiv.appendChild(runBtn);
+    boxDiv.appendChild(outDiv);
+    boxDiv.appendChild(helpDiv);
+    boxDiv.appendChild(footerDiv);
+    o.appendChild(boxDiv);
+    htmlBuilt = true;
+  }
+  
+  if (!htmlBuilt) {
+    // Ultimate fallback - simple message
+    o.innerHTML = "<div style='padding:40px;text-align:center;color:#fff'><h2>Site Memory Helper</h2><p>This site's security policy prevents the bookmarklet from loading.</p><p>Try using your browser's developer tools instead.</p></div>";
+  }
   
   // Add overlay to page (ensure body exists)
   if (d.body) {
@@ -311,8 +424,16 @@ ${getBrowserInstructions()}
   // EVENT HANDLERS
   // ============================================================================
   
-  // Close button handler
-  o.querySelector("#x").onclick = () => o.remove();
+  // Close button handler (only if element exists)
+  const closeBtn = o.querySelector("#x");
+  if (closeBtn) {
+    closeBtn.onclick = () => o.remove();
+  } else {
+    // Fallback: click anywhere to close
+    o.onclick = (e) => {
+      if (e.target === o) o.remove();
+    };
+  }
   
   // ============================================================================
   // STATS UPDATE FUNCTION
@@ -399,7 +520,9 @@ ${getBrowserInstructions()}
    * Handles the "Clear selected" button click
    * Clears the selected storage types and logs the results
    */
-  o.querySelector("#run").onclick = async () => {
+  const runBtn = o.querySelector("#run");
+  if (runBtn) {
+    runBtn.onclick = async () => {
     let log = [];
     
     // Clear localStorage if selected
@@ -468,6 +591,7 @@ ${getBrowserInstructions()}
     
     // Update stats after clearing
     await updateStats();
-  };
+    };
+  }
 })();
 

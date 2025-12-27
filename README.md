@@ -103,6 +103,7 @@ The bookmarklet:
 - Some cookies may remain due to browser security restrictions (HttpOnly, Secure, SameSite attributes)
 - The bookmarklet can only clear what browsers allow scripts to access
 - For complete clearing, use the browser-specific instructions provided in the tool
+- **LinkedIn and other strict CSP sites**: Some websites (like LinkedIn) have strict Content Security Policies that may prevent the bookmarklet from loading. The bookmarklet includes fallback methods, but if it doesn't work, use your browser's developer tools directly.
 
 ## Privacy & Security
 
