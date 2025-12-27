@@ -15,7 +15,7 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             line-height: 1.6;
             color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #ffffff;
             min-height: 100vh;
             padding: 20px;
         }
@@ -25,28 +25,30 @@
             margin: 0 auto;
             background: white;
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             overflow: hidden;
+            border: 1px solid #e0e0e0;
         }
         
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: #ffffff;
+            color: #8B1538;
             padding: 40px 30px;
             text-align: center;
+            border-bottom: 3px solid #8B1538;
         }
         
         .header img {
             max-width: 150px;
             margin-bottom: 20px;
             border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
         .header h1 {
             font-size: 2.5em;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            color: #8B1538;
         }
         
         .header p {
@@ -63,22 +65,22 @@
         }
         
         .section h2 {
-            color: #667eea;
+            color: #8B1538;
             font-size: 1.8em;
             margin-bottom: 15px;
             padding-bottom: 10px;
-            border-bottom: 3px solid #667eea;
+            border-bottom: 3px solid #8B1538;
         }
         
         .section h3 {
-            color: #764ba2;
+            color: #8B1538;
             font-size: 1.3em;
             margin: 20px 0 10px 0;
         }
         
         .bookmarklet-container {
-            background: #f8f9fa;
-            border: 3px dashed #667eea;
+            background: #ffffff;
+            border: 3px dashed #8B1538;
             border-radius: 15px;
             padding: 30px;
             text-align: center;
@@ -87,22 +89,23 @@
         
         .bookmarklet-link {
             display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #8B1538;
             color: white;
             padding: 20px 40px;
             font-size: 1.2em;
             font-weight: bold;
             text-decoration: none;
             border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 5px 15px rgba(139, 21, 56, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
             cursor: move;
             user-select: none;
         }
         
         .bookmarklet-link:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.6);
+            background: #A01A45;
+            box-shadow: 0 8px 20px rgba(139, 21, 56, 0.6);
         }
         
         .bookmarklet-link:active {
@@ -110,8 +113,8 @@
         }
         
         .instructions {
-            background: #f8f9fa;
-            border-left: 4px solid #667eea;
+            background: #ffffff;
+            border-left: 4px solid #8B1538;
             padding: 20px;
             margin: 20px 0;
             border-radius: 5px;
@@ -135,8 +138,8 @@
         
         .browser-tab {
             padding: 10px 20px;
-            background: #e9ecef;
-            border: 2px solid transparent;
+            background: #ffffff;
+            border: 2px solid #e0e0e0;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 500;
@@ -144,13 +147,14 @@
         }
         
         .browser-tab:hover {
-            background: #dee2e6;
+            background: #f5f5f5;
+            border-color: #8B1538;
         }
         
         .browser-tab.active {
-            background: #667eea;
+            background: #8B1538;
             color: white;
-            border-color: #667eea;
+            border-color: #8B1538;
         }
         
         .browser-instructions {
@@ -169,14 +173,15 @@
         }
         
         .feature-card {
-            background: #f8f9fa;
+            background: #ffffff;
             padding: 20px;
             border-radius: 10px;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #8B1538;
+            border: 1px solid #e0e0e0;
         }
         
         .feature-card h4 {
-            color: #667eea;
+            color: #8B1538;
             margin-bottom: 10px;
         }
         
@@ -196,7 +201,7 @@
             position: absolute;
             top: 10px;
             right: 10px;
-            background: #667eea;
+            background: #8B1538;
             color: white;
             border: none;
             padding: 5px 15px;
@@ -206,27 +211,29 @@
         }
         
         .copy-btn:hover {
-            background: #764ba2;
+            background: #A01A45;
         }
         
         .alert {
-            background: #d1ecf1;
-            border: 1px solid #bee5eb;
-            color: #0c5460;
+            background: #ffffff;
+            border: 1px solid #8B1538;
+            border-left: 4px solid #8B1538;
+            color: #333;
             padding: 15px;
             border-radius: 8px;
             margin: 20px 0;
         }
         
         .footer {
-            background: #f8f9fa;
+            background: #ffffff;
             padding: 30px;
             text-align: center;
             color: #666;
+            border-top: 1px solid #e0e0e0;
         }
         
         .footer a {
-            color: #667eea;
+            color: #8B1538;
             text-decoration: none;
         }
         
@@ -564,7 +571,7 @@
                 btn.style.background = '#28a745';
                 setTimeout(() => {
                     btn.textContent = originalText;
-                    btn.style.background = '#667eea';
+                    btn.style.background = '#8B1538';
                 }, 2000);
             }).catch(err => {
                 alert('Failed to copy. Please select and copy manually.');
