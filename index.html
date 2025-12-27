@@ -197,6 +197,18 @@
             position: relative;
         }
         
+        .code-block pre {
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            color: inherit;
+            font-family: inherit;
+            font-size: inherit;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        
         .copy-btn {
             position: absolute;
             top: 10px;
@@ -272,47 +284,13 @@
                     <p style="font-size: 1.1em; margin-bottom: 20px; font-weight: 500;">
                         Drag this button to your bookmarks bar:
                     </p>
-                    <a href="javascript:(async()=>{const d=document,w=window;let s={ls:0,ss:0,c:0,sw:0,idb:0,ck:0,est:null};try{s.ls=Object.keys(localStorage).length}catch{}try{s.ss=Object.keys(sessionStorage).length}catch{}try{if('caches'in w)s.c=(await caches.keys()).length}catch{}try{if('serviceWorker'in navigator)s.sw=(await navigator.serviceWorker.getRegistrations()).length}catch{}try{if(indexedDB.databases)s.idb=(await indexedDB.databases()).length}catch{}try{if(document.cookie&&document.cookie.trim())s.ck=document.cookie.split(';').filter(c=>c.trim()).length;else s.ck=0}catch{s.ck=0}try{if(navigator.storage?.estimate)s.est=await navigator.storage.estimate()}catch{}async function clearCookies(){if(!document.cookie||document.cookie.trim()==='')return;const cookies=document.cookie.split(';');for(const c of cookies){const trimmed=c.trim();if(!trimmed)continue;const n=trimmed.split('=')[0].trim();if(!n)continue;for(const dmn of[location.hostname,'.'+location.hostname]){const paths=['/',location.pathname];for(const path of paths){document.cookie=n+'=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path='+path+'; domain='+dmn;document.cookie=n+'=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path='+path}}}}const css='position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,.86);color:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding:24px;overflow:auto;',box='max-width:880px;margin:0 auto;background:#111;border-radius:14px;padding:22px;box-shadow:0 0 0 1px #333';const row=(a,b)=>`<div style='display:flex;justify-content:space-between;margin:6px 0;opacity:.9'><div>${a}</div><div style='opacity:.7'>${b}</div></div>`;const chk=(i,l,d,x)=>`<label style='display:block;margin:12px 0;opacity:${x?.5:1}'><input type='checkbox' id='${i}' ${x?'disabled':''} style='margin-right:8px'><strong>${l}</strong><div style='font-size:13px;opacity:.75;margin-left:22px'>${d}</div></label>`;function getBrowserInstructions(){const ua=navigator.userAgent;const isChrome=/Chrome|Chromium|Brave|Edg|Opera/i.test(ua)&&!/Firefox|Safari/i.test(ua);const isFirefox=/Firefox/i.test(ua);const isSafari=/Safari/i.test(ua)&&!/Chrome|Chromium|Edg|Firefox/i.test(ua);if(isChrome){return`<strong>Chrome/Edge/Brave:</strong>
-1. Right-click anywhere on the page
-2. Select 'Inspect' (or press F12)
-3. Click the 'Application' tab at the top
-4. In the left sidebar, find 'Storage'
-5. Click 'Clear site data' button at the top
-6. Or manually clear:
-   - Cookies: Expand 'Cookies' → Right-click domain → 'Clear'
-   - Cache Storage: Expand 'Cache Storage' → Right-click each entry → 'Delete'
-   - Local Storage: Expand 'Local Storage' → Right-click domain → 'Clear'
-   - IndexedDB: Expand 'IndexedDB' → Right-click database → 'Delete Database'
-`}else if(isFirefox){return`<strong>Firefox:</strong>
-1. Right-click anywhere on the page
-2. Select 'Inspect' (or press F12)
-3. Click the 'Storage' tab at the top
-4. Expand each section and right-click to delete:
-   - Cookies: Right-click cookie → 'Delete'
-   - Cache Storage: Right-click cache → 'Delete'
-   - Local Storage: Right-click domain → 'Delete All'
-   - IndexedDB: Right-click database → 'Delete Database'
-5. Or use: Menu → Settings → Privacy → Cookies and Site Data → 'Clear Data'
-`}else if(isSafari){return`<strong>Safari:</strong>
-1. Enable Developer menu: Safari → Settings → Advanced → 'Show features for web developers'
-2. Right-click on the page → 'Inspect Element'
-3. Click the 'Storage' tab
-4. Expand sections and delete items:
-   - Cookies: Right-click → 'Delete'
-   - Local Storage: Right-click → 'Delete All'
-   - IndexedDB: Right-click → 'Delete Database'
-5. Or use: Safari → Settings → Privacy → 'Manage Website Data' → Remove site
-`}else{return`<strong>General Instructions:</strong>
-1. Right-click on the page and select 'Inspect' or 'Inspect Element'
-2. Look for tabs like 'Application', 'Storage', or 'Debugger'
-3. Find sections for Cookies, Cache, Local Storage, and IndexedDB
-4. Right-click on items to delete them
-5. Or use your browser's settings menu to clear site data
-`}}const o=d.createElement('div');o.style.cssText=css;o.innerHTML=`<div style='${box}'><div style='display:flex;justify-content:space-between;align-items:center'><div style='font-size:22px;font-weight:700'>Site Memory Helper</div><button id='x' style='background:none;border:none;color:#aaa;font-size:22px;cursor:pointer'>×</button></div><div style='margin-top:8px;opacity:.85'>Nothing has been cleared yet. Choose what to clean.</div><div style='margin-top:18px' id='stats'></div><div style='margin-top:18px;border-top:1px solid #333;padding-top:16px'>${chk('l','Clear localStorage','Small saved values used by the site.',s.ls===0)}${chk('s','Clear sessionStorage','Temporary tab memory.',s.ss===0)}${chk('c','Delete Cache Storage','Stored network responses.',s.c===0)}${chk('w','Unregister service workers','Background logic that can keep old behavior.',s.sw===0)}${chk('k','Attempt to clear cookies','Only cookies browsers allow scripts to remove.',s.ck===0)}</div><button id='run' style='margin-top:16px;background:#fff;color:#000;border:none;border-radius:10px;padding:10px 16px;font-size:15px;cursor:pointer'>Clear selected</button><div id='out' style='margin-top:16px;opacity:.9'></div><div style='margin-top:22px;border-top:1px solid #333;padding-top:14px'><div style='font-weight:600;margin-bottom:6px'>Why some cookies and cache may remain</div><div style='opacity:.85;font-size:14px;line-height:1.45;margin-bottom:12px'>Browsers protect certain cookies and cache for safety. Scripts can only remove a subset. To fully clear everything, use your browser's developer tools with the instructions below.</div><div style='background:#000;padding:14px;border-radius:8px;font-size:13px;line-height:1.6;white-space:pre-wrap;font-family:monospace'>${getBrowserInstructions()}</div></div><div style='margin-top:14px;font-size:12px;opacity:.6'>Runs locally. No tracking. No network.</div></div>`;if(d.body){d.body.appendChild(o)}else{const addOverlay=()=>{if(d.body)d.body.appendChild(o)};if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',addOverlay);else setTimeout(addOverlay,0)}o.querySelector('#x').onclick=()=>o.remove();async function updateStats(){let cachesCount=0,swCount=0,idbCount=0;if('caches'in w)try{cachesCount=(await caches.keys()).length}catch{}if(navigator.serviceWorker)try{swCount=(await navigator.serviceWorker.getRegistrations()).length}catch{}if(indexedDB.databases)try{idbCount=(await indexedDB.databases()).length}catch{}const stats=d.getElementById('stats');let lsCount=0,ssCount=0,cookieCount=0;try{lsCount=localStorage.length}catch{lsCount=0}try{ssCount=sessionStorage.length}catch{ssCount=0}try{cookieCount=document.cookie&&document.cookie.trim()?document.cookie.split(';').filter(c=>c.trim()).length:0}catch{cookieCount=0}stats.innerHTML=row('localStorage items',lsCount)+row('sessionStorage items',ssCount)+row('Cache Storage entries',cachesCount)+row('Service workers',swCount)+row('IndexedDB databases',idbCount)+row('Cookies (visible)',cookieCount)}updateStats();o.querySelector('#run').onclick=async()=>{let log=[];if(d.getElementById('l').checked)try{localStorage.clear();log.push('localStorage cleared')}catch{log.push('localStorage failed')}if(d.getElementById('s').checked)try{sessionStorage.clear();log.push('sessionStorage cleared')}catch{log.push('sessionStorage failed')}if(d.getElementById('c').checked)try{for(const k of await caches.keys())await caches.delete(k);log.push('Cache Storage cleared')}catch{log.push('Cache Storage failed')}if(d.getElementById('w').checked)try{for(const r of await navigator.serviceWorker.getRegistrations())await r.unregister();log.push('Service workers unregistered')}catch{log.push('Service workers failed')}if(d.getElementById('k').checked)try{await clearCookies();log.push('Cookie cleanup attempted')}catch{log.push('Cookie cleanup failed')}const outDiv=o.querySelector('#out');if(log.length===0)outDiv.innerHTML='<div style=\'margin-top:8px;opacity:.7\'>No items selected for clearing.</div>';else outDiv.innerHTML='<div style=\'margin-top:8px\'><strong>Results:</strong><br>'+log.map(x=>'• '+x).join('<br>')+'</div>';await updateStats()}})();" 
+                    <a href="#" 
                         id="bookmarklet" 
                         class="bookmarklet-link" 
-                        draggable="true">
-                        📚 Dr. Cache
+                        draggable="true"
+                        title="Dr. Cache - Site Memory Helper"
+                        data-bookmark-name="Dr. Cache">
+                        Dr. Cache
                     </a>
                     <p style="margin-top: 20px; color: #666; font-size: 0.95em;">
                         Don't see your bookmarks bar? See instructions below ↓
@@ -431,43 +409,8 @@
                         
                         <div class="code-block">
                             <button class="copy-btn" onclick="copyBookmarklet()">Copy Code</button>
-                            <div id="bookmarklet-code">javascript:(async()=>{const d=document,w=window;let s={ls:0,ss:0,c:0,sw:0,idb:0,ck:0,est:null};try{s.ls=Object.keys(localStorage).length}catch{}try{s.ss=Object.keys(sessionStorage).length}catch{}try{if("caches"in w)s.c=(await caches.keys()).length}catch{}try{if("serviceWorker"in navigator)s.sw=(await navigator.serviceWorker.getRegistrations()).length}catch{}try{if(indexedDB.databases)s.idb=(await indexedDB.databases()).length}catch{}try{if(document.cookie&&document.cookie.trim())s.ck=document.cookie.split(";").filter(c=>c.trim()).length;else s.ck=0}catch{s.ck=0}try{if(navigator.storage?.estimate)s.est=await navigator.storage.estimate()}catch{}async function clearCookies(){if(!document.cookie||document.cookie.trim()==="")return;const cookies=document.cookie.split(";");for(const c of cookies){const trimmed=c.trim();if(!trimmed)continue;const n=trimmed.split("=")[0].trim();if(!n)continue;for(const dmn of[location.hostname,"."+location.hostname]){const paths=["/",location.pathname];for(const path of paths){document.cookie=n+"=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path="+path+"; domain="+dmn;document.cookie=n+"=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path="+path}}}}const css="position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,.86);color:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding:24px;overflow:auto;",box="max-width:880px;margin:0 auto;background:#111;border-radius:14px;padding:22px;box-shadow:0 0 0 1px #333";const row=(a,b)=>`<div style="display:flex;justify-content:space-between;margin:6px 0;opacity:.9"><div>${a}</div><div style="opacity:.7">${b}</div></div>`;const chk=(i,l,d,x)=>`<label style="display:block;margin:12px 0;opacity:${x?.5:1}"><input type="checkbox" id="${i}" ${x?"disabled":""} style="margin-right:8px"><strong>${l}</strong><div style="font-size:13px;opacity:.75;margin-left:22px">${d}</div></label>`;function getBrowserInstructions(){const ua=navigator.userAgent;const isChrome=/Chrome|Chromium|Brave|Edg|Opera/i.test(ua)&&!/Firefox|Safari/i.test(ua);const isFirefox=/Firefox/i.test(ua);const isSafari=/Safari/i.test(ua)&&!/Chrome|Chromium|Edg|Firefox/i.test(ua);if(isChrome){return`<strong>Chrome/Edge/Brave:</strong>
-1. Right-click anywhere on the page
-2. Select "Inspect" (or press F12)
-3. Click the "Application" tab at the top
-4. In the left sidebar, find "Storage"
-5. Click "Clear site data" button at the top
-6. Or manually clear:
-   - Cookies: Expand "Cookies" → Right-click domain → "Clear"
-   - Cache Storage: Expand "Cache Storage" → Right-click each entry → "Delete"
-   - Local Storage: Expand "Local Storage" → Right-click domain → "Clear"
-   - IndexedDB: Expand "IndexedDB" → Right-click database → "Delete Database"
-`}else if(isFirefox){return`<strong>Firefox:</strong>
-1. Right-click anywhere on the page
-2. Select "Inspect" (or press F12)
-3. Click the "Storage" tab at the top
-4. Expand each section and right-click to delete:
-   - Cookies: Right-click cookie → "Delete"
-   - Cache Storage: Right-click cache → "Delete"
-   - Local Storage: Right-click domain → "Delete All"
-   - IndexedDB: Right-click database → "Delete Database"
-5. Or use: Menu → Settings → Privacy → Cookies and Site Data → "Clear Data"
-`}else if(isSafari){return`<strong>Safari:</strong>
-1. Enable Developer menu: Safari → Settings → Advanced → "Show features for web developers"
-2. Right-click on the page → "Inspect Element"
-3. Click the "Storage" tab
-4. Expand sections and delete items:
-   - Cookies: Right-click → "Delete"
-   - Local Storage: Right-click → "Delete All"
-   - IndexedDB: Right-click → "Delete Database"
-5. Or use: Safari → Settings → Privacy → "Manage Website Data" → Remove site
-`}else{return`<strong>General Instructions:</strong>
-1. Right-click on the page and select "Inspect" or "Inspect Element"
-2. Look for tabs like "Application", "Storage", or "Debugger"
-3. Find sections for Cookies, Cache, Local Storage, and IndexedDB
-4. Right-click on items to delete them
-5. Or use your browser's settings menu to clear site data
-`}}const o=d.createElement("div");o.style.cssText=css;o.innerHTML=`<div style="${box}"><div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:22px;font-weight:700">Site Memory Helper</div><button id="x" style="background:none;border:none;color:#aaa;font-size:22px;cursor:pointer">×</button></div><div style="margin-top:8px;opacity:.85">Nothing has been cleared yet. Choose what to clean.</div><div style="margin-top:18px" id="stats"></div><div style="margin-top:18px;border-top:1px solid #333;padding-top:16px">${chk("l","Clear localStorage","Small saved values used by the site.",s.ls===0)}${chk("s","Clear sessionStorage","Temporary tab memory.",s.ss===0)}${chk("c","Delete Cache Storage","Stored network responses.",s.c===0)}${chk("w","Unregister service workers","Background logic that can keep old behavior.",s.sw===0)}${chk("k","Attempt to clear cookies","Only cookies browsers allow scripts to remove.",s.ck===0)}</div><button id="run" style="margin-top:16px;background:#fff;color:#000;border:none;border-radius:10px;padding:10px 16px;font-size:15px;cursor:pointer">Clear selected</button><div id="out" style="margin-top:16px;opacity:.9"></div><div style="margin-top:22px;border-top:1px solid #333;padding-top:14px"><div style="font-weight:600;margin-bottom:6px">Why some cookies and cache may remain</div><div style="opacity:.85;font-size:14px;line-height:1.45;margin-bottom:12px">Browsers protect certain cookies and cache for safety. Scripts can only remove a subset. To fully clear everything, use your browser's developer tools with the instructions below.</div><div style="background:#000;padding:14px;border-radius:8px;font-size:13px;line-height:1.6;white-space:pre-wrap;font-family:monospace">${getBrowserInstructions()}</div></div><div style="margin-top:14px;font-size:12px;opacity:.6">Runs locally. No tracking. No network.</div></div>`;if(d.body){d.body.appendChild(o)}else{const addOverlay=()=>{if(d.body)d.body.appendChild(o)};if(d.readyState==="loading")d.addEventListener("DOMContentLoaded",addOverlay);else setTimeout(addOverlay,0)}o.querySelector("#x").onclick=()=>o.remove();async function updateStats(){let cachesCount=0,swCount=0,idbCount=0;if("caches"in w)try{cachesCount=(await caches.keys()).length}catch{}if(navigator.serviceWorker)try{swCount=(await navigator.serviceWorker.getRegistrations()).length}catch{}if(indexedDB.databases)try{idbCount=(await indexedDB.databases()).length}catch{}const stats=d.getElementById("stats");let lsCount=0,ssCount=0,cookieCount=0;try{lsCount=localStorage.length}catch{lsCount=0}try{ssCount=sessionStorage.length}catch{ssCount=0}try{cookieCount=document.cookie&&document.cookie.trim()?document.cookie.split(";").filter(c=>c.trim()).length:0}catch{cookieCount=0}stats.innerHTML=row("localStorage items",lsCount)+row("sessionStorage items",ssCount)+row("Cache Storage entries",cachesCount)+row("Service workers",swCount)+row("IndexedDB databases",idbCount)+row("Cookies (visible)",cookieCount)}updateStats();o.querySelector("#run").onclick=async()=>{let log=[];if(d.getElementById("l").checked)try{localStorage.clear();log.push("localStorage cleared")}catch{log.push("localStorage failed")}if(d.getElementById("s").checked)try{sessionStorage.clear();log.push("sessionStorage cleared")}catch{log.push("sessionStorage failed")}if(d.getElementById("c").checked)try{for(const k of await caches.keys())await caches.delete(k);log.push("Cache Storage cleared")}catch{log.push("Cache Storage failed")}if(d.getElementById("w").checked)try{for(const r of await navigator.serviceWorker.getRegistrations())await r.unregister();log.push("Service workers unregistered")}catch{log.push("Service workers failed")}if(d.getElementById("k").checked)try{await clearCookies();log.push("Cookie cleanup attempted")}catch{log.push("Cookie cleanup failed")}const outDiv=o.querySelector("#out");if(log.length===0)outDiv.innerHTML="<div style='margin-top:8px;opacity:.7'>No items selected for clearing.</div>";else outDiv.innerHTML="<div style='margin-top:8px'><strong>Results:</strong><br>"+log.map(x=>"• "+x).join("<br>")+"</div>";await updateStats()}})();</div>
+                            <pre id="bookmarklet-code"></pre>
+                        </div>
                         <p style="margin-top: 15px; color: #666; font-size: 0.9em;">
                             <strong>Important:</strong> Make sure to copy the ENTIRE code, starting with <code>javascript:</code> and ending with <code>})();</code>
                         </p>
@@ -562,26 +505,164 @@
             event.target.classList.add('active');
         }
         
-        function copyBookmarklet() {
-            const code = document.getElementById('bookmarklet-code').textContent;
-            navigator.clipboard.writeText(code).then(() => {
-                const btn = event.target;
-                const originalText = btn.textContent;
-                btn.textContent = '✓ Copied!';
-                btn.style.background = '#28a745';
-                setTimeout(() => {
-                    btn.textContent = originalText;
-                    btn.style.background = '#8B1538';
-                }, 2000);
-            }).catch(err => {
-                alert('Failed to copy. Please select and copy manually.');
-            });
+        // Load bookmarklet code from minified.js
+        let bookmarkletCode = '';
+        
+        async function loadBookmarkletCode() {
+            try {
+                const response = await fetch('minified.js');
+                const code = await response.text();
+                bookmarkletCode = code; // Keep the full code with javascript: prefix
+                
+                // Set the href for the drag-to-bookmark link
+                const link = document.getElementById('bookmarklet');
+                if (link) {
+                    link.href = code;
+                    // Ensure text content is set for bookmark name
+                    if (!link.textContent || link.textContent.trim() === '') {
+                        link.textContent = 'Dr. Cache';
+                    }
+                    // Set title attribute as backup
+                    link.title = 'Dr. Cache - Site Memory Helper';
+                }
+                
+                // Set the code in the pre element (without javascript: prefix for display)
+                const codeElement = document.getElementById('bookmarklet-code');
+                if (codeElement) {
+                    const cleanCode = code.replace(/^javascript:/, '');
+                    codeElement.textContent = cleanCode;
+                }
+                
+                // Set up drag functionality after code is loaded
+                setupDragToBookmark();
+            } catch (err) {
+                console.error('Failed to load bookmarklet code:', err);
+                // Fallback message
+                const codeElement = document.getElementById('bookmarklet-code');
+                if (codeElement) {
+                    codeElement.textContent = 'Error loading bookmarklet code. Please use the manual method.';
+                }
+            }
         }
         
-        // Prevent default drag behavior and make it work as bookmarklet
-        document.getElementById('bookmarklet').addEventListener('dragstart', function(e) {
-            e.dataTransfer.setData('text/uri-list', this.href);
-            e.dataTransfer.setData('text/plain', this.href);
+        // Load code when page loads
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadBookmarkletCode);
+        } else {
+            loadBookmarkletCode();
+        }
+        
+        function copyBookmarklet() {
+            // Try to get code from the bookmarklet link first (most reliable)
+            const link = document.getElementById('bookmarklet');
+            let codeToCopy = '';
+            
+            if (link && link.href && link.href !== '#' && link.href.startsWith('javascript:')) {
+                codeToCopy = link.href;
+            } else {
+                // Fallback: get from pre element
+                const codeElement = document.getElementById('bookmarklet-code');
+                const code = codeElement ? codeElement.textContent.trim() : '';
+                codeToCopy = code.startsWith('javascript:') ? code : 'javascript:' + code;
+            }
+            
+            if (!codeToCopy || codeToCopy === 'javascript:') {
+                alert('Bookmarklet code not loaded yet. Please wait a moment and try again.');
+                return;
+            }
+            
+            // Try modern clipboard API first
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(codeToCopy).then(() => {
+                    const btn = event.target;
+                    const originalText = btn.textContent;
+                    btn.textContent = '✓ Copied!';
+                    btn.style.background = '#28a745';
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.style.background = '#8B1538';
+                    }, 2000);
+                }).catch(err => {
+                    // Fallback to textarea method
+                    fallbackCopy(codeToCopy);
+                });
+            } else {
+                // Fallback for older browsers
+                fallbackCopy(codeToCopy);
+            }
+        }
+        
+        function fallbackCopy(text) {
+            // Create temporary textarea
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.left = '-9999px';
+            textarea.style.top = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.select();
+            textarea.setSelectionRange(0, text.length);
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    const btn = event.target;
+                    const originalText = btn.textContent;
+                    btn.textContent = '✓ Copied!';
+                    btn.style.background = '#28a745';
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.style.background = '#8B1538';
+                    }, 2000);
+                } else {
+                    alert('Copy failed. Please select the code manually and copy it (Ctrl+C or Cmd+C).');
+                }
+            } catch (err) {
+                alert('Copy not supported. Please select the code manually and copy it (Ctrl+C or Cmd+C).');
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+        
+        // Set up drag-to-bookmark functionality
+        let dragHandlerSetup = false;
+        
+        function setupDragToBookmark() {
+            if (dragHandlerSetup) return; // Only set up once
+            
+            const bookmarkletLink = document.getElementById('bookmarklet');
+            if (bookmarkletLink && bookmarkletLink.href && bookmarkletLink.href !== '#' && bookmarkletLink.href.startsWith('javascript:')) {
+                bookmarkletLink.addEventListener('dragstart', function(e) {
+                    // Ensure text content is visible for bookmark name
+                    if (!this.textContent || this.textContent.trim() === '') {
+                        this.textContent = 'Dr. Cache';
+                    }
+                    
+                    // Set the bookmark URL - browsers use link text as bookmark name
+                    e.dataTransfer.setData('text/uri-list', this.href);
+                    e.dataTransfer.setData('text/plain', this.href);
+                    e.dataTransfer.effectAllowed = 'copy';
+                    
+                    // For Firefox, explicitly set bookmark name
+                    try {
+                        const bookmarkName = this.textContent.trim() || 'Dr. Cache';
+                        e.dataTransfer.setData('text/x-moz-url', this.href + '\n' + bookmarkName);
+                    } catch (err) {
+                        // Not Firefox or not supported
+                    }
+                }, { once: false });
+                
+                dragHandlerSetup = true;
+            } else if (bookmarkletLink) {
+                // Retry after a short delay if code hasn't loaded yet
+                setTimeout(setupDragToBookmark, 100);
+            }
+        }
+        
+        // Set up drag handler after code loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Wait for code to load, then set up drag
+            setTimeout(setupDragToBookmark, 500);
         });
     </script>
 </body>
