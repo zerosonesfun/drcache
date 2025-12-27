@@ -518,11 +518,10 @@
                 const link = document.getElementById('bookmarklet');
                 if (link) {
                     link.href = code;
-                    // Ensure text content is set for bookmark name
-                    if (!link.textContent || link.textContent.trim() === '') {
-                        link.textContent = 'Dr. Cache';
-                    }
-                    // Set title attribute as backup
+                    // Ensure text content is set for bookmark name - browsers use this
+                    link.textContent = 'Dr. Cache';
+                    link.innerText = 'Dr. Cache'; // Also set innerText for compatibility
+                    // Set title attribute
                     link.title = 'Dr. Cache - Site Memory Helper';
                 }
                 
@@ -553,17 +552,21 @@
         }
         
         function copyBookmarklet() {
-            // Try to get code from the bookmarklet link first (most reliable)
-            const link = document.getElementById('bookmarklet');
-            let codeToCopy = '';
+            // Get code from pre element
+            const codeElement = document.getElementById('bookmarklet-code');
+            let codeToCopy = codeElement ? codeElement.textContent.trim() : '';
             
-            if (link && link.href && link.href !== '#' && link.href.startsWith('javascript:')) {
-                codeToCopy = link.href;
+            // Try bookmarklet link as fallback
+            if (!codeToCopy || codeToCopy === '') {
+                const link = document.getElementById('bookmarklet');
+                if (link && link.href && link.href !== '#' && link.href.startsWith('javascript:')) {
+                    codeToCopy = link.href;
+                }
             } else {
-                // Fallback: get from pre element
-                const codeElement = document.getElementById('bookmarklet-code');
-                const code = codeElement ? codeElement.textContent.trim() : '';
-                codeToCopy = code.startsWith('javascript:') ? code : 'javascript:' + code;
+                // Add javascript: prefix if not present
+                if (!codeToCopy.startsWith('javascript:')) {
+                    codeToCopy = 'javascript:' + codeToCopy;
+                }
             }
             
             if (!codeToCopy || codeToCopy === 'javascript:') {
@@ -571,43 +574,29 @@
                 return;
             }
             
-            // Try modern clipboard API first
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(codeToCopy).then(() => {
-                    const btn = event.target;
-                    const originalText = btn.textContent;
-                    btn.textContent = '✓ Copied!';
-                    btn.style.background = '#28a745';
-                    setTimeout(() => {
-                        btn.textContent = originalText;
-                        btn.style.background = '#8B1538';
-                    }, 2000);
-                }).catch(err => {
-                    // Fallback to textarea method
-                    fallbackCopy(codeToCopy);
-                });
-            } else {
-                // Fallback for older browsers
-                fallbackCopy(codeToCopy);
-            }
-        }
-        
-        function fallbackCopy(text) {
-            // Create temporary textarea
+            // Simple, reliable copy method using textarea
             const textarea = document.createElement('textarea');
-            textarea.value = text;
+            textarea.value = codeToCopy;
             textarea.style.position = 'fixed';
-            textarea.style.left = '-9999px';
-            textarea.style.top = '-9999px';
+            textarea.style.top = '0';
+            textarea.style.left = '0';
+            textarea.style.width = '2em';
+            textarea.style.height = '2em';
+            textarea.style.padding = '0';
+            textarea.style.border = 'none';
+            textarea.style.outline = 'none';
+            textarea.style.boxShadow = 'none';
+            textarea.style.background = 'transparent';
             document.body.appendChild(textarea);
+            textarea.focus();
             textarea.select();
-            textarea.setSelectionRange(0, text.length);
+            
+            const btn = event.target;
+            const originalText = btn.textContent;
             
             try {
                 const successful = document.execCommand('copy');
                 if (successful) {
-                    const btn = event.target;
-                    const originalText = btn.textContent;
                     btn.textContent = '✓ Copied!';
                     btn.style.background = '#28a745';
                     setTimeout(() => {
@@ -615,45 +604,79 @@
                         btn.style.background = '#8B1538';
                     }, 2000);
                 } else {
-                    alert('Copy failed. Please select the code manually and copy it (Ctrl+C or Cmd+C).');
+                    // Try clipboard API as fallback
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(codeToCopy).then(() => {
+                            btn.textContent = '✓ Copied!';
+                            btn.style.background = '#28a745';
+                            setTimeout(() => {
+                                btn.textContent = originalText;
+                                btn.style.background = '#8B1538';
+                            }, 2000);
+                        }).catch(() => {
+                            alert('Copy failed. Please select the code manually and copy it.');
+                        });
+                    } else {
+                        alert('Copy failed. Please select the code manually and copy it.');
+                    }
                 }
             } catch (err) {
-                alert('Copy not supported. Please select the code manually and copy it (Ctrl+C or Cmd+C).');
+                // Try clipboard API as fallback
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(codeToCopy).then(() => {
+                        btn.textContent = '✓ Copied!';
+                        btn.style.background = '#28a745';
+                        setTimeout(() => {
+                            btn.textContent = originalText;
+                            btn.style.background = '#8B1538';
+                        }, 2000);
+                    }).catch(() => {
+                        alert('Copy not supported. Please select the code manually and copy it.');
+                    });
+                } else {
+                    alert('Copy not supported. Please select the code manually and copy it.');
+                }
             } finally {
                 document.body.removeChild(textarea);
             }
         }
         
         // Set up drag-to-bookmark functionality
-        let dragHandlerSetup = false;
-        
         function setupDragToBookmark() {
-            if (dragHandlerSetup) return; // Only set up once
-            
             const bookmarkletLink = document.getElementById('bookmarklet');
-            if (bookmarkletLink && bookmarkletLink.href && bookmarkletLink.href !== '#' && bookmarkletLink.href.startsWith('javascript:')) {
-                bookmarkletLink.addEventListener('dragstart', function(e) {
-                    // Ensure text content is visible for bookmark name
-                    if (!this.textContent || this.textContent.trim() === '') {
-                        this.textContent = 'Dr. Cache';
-                    }
+            if (!bookmarkletLink) return;
+            
+            if (bookmarkletLink.href && bookmarkletLink.href !== '#' && bookmarkletLink.href.startsWith('javascript:')) {
+                // Ensure link has visible text for bookmark name
+                if (!bookmarkletLink.textContent || bookmarkletLink.textContent.trim() === '') {
+                    bookmarkletLink.textContent = 'Dr. Cache';
+                }
+                
+                // Remove any existing dragstart listeners by cloning
+                const newLink = bookmarkletLink.cloneNode(true);
+                bookmarkletLink.parentNode.replaceChild(newLink, bookmarkletLink);
+                
+                newLink.addEventListener('dragstart', function(e) {
+                    // Browsers use the link's textContent as the bookmark name
+                    // Make sure it's set
+                    const bookmarkName = this.textContent.trim() || 'Dr. Cache';
                     
-                    // Set the bookmark URL - browsers use link text as bookmark name
+                    // Set the bookmark URL
                     e.dataTransfer.setData('text/uri-list', this.href);
                     e.dataTransfer.setData('text/plain', this.href);
                     e.dataTransfer.effectAllowed = 'copy';
                     
-                    // For Firefox, explicitly set bookmark name
+                    // Firefox-specific: set bookmark name explicitly
                     try {
-                        const bookmarkName = this.textContent.trim() || 'Dr. Cache';
                         e.dataTransfer.setData('text/x-moz-url', this.href + '\n' + bookmarkName);
                     } catch (err) {
-                        // Not Firefox or not supported
+                        // Not Firefox
                     }
-                }, { once: false });
-                
-                dragHandlerSetup = true;
-            } else if (bookmarkletLink) {
+                    
+                    // Chrome/Edge: ensure text is in the link when dragging
+                    // The browser will use the link's innerText/textContent
+                });
+            } else {
                 // Retry after a short delay if code hasn't loaded yet
                 setTimeout(setupDragToBookmark, 100);
             }
