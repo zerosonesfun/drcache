@@ -4,6 +4,10 @@
 
 A powerful browser bookmarklet that detects and helps you clear various types of browser storage (cookies, cache, localStorage, sessionStorage, service workers, and IndexedDB) for the current website.
 
+🌐 **[Try it now on GitHub Pages →](https://zerosonesfun.github.io/drcache/)**
+
+The GitHub Pages site includes drag-to-bookmark functionality and detailed installation instructions for all browsers.
+
 ## Features
 
 - 🔍 **Detects All Storage Types**: Automatically detects and counts:
@@ -22,6 +26,10 @@ A powerful browser bookmarklet that detects and helps you clear various types of
 - 🔒 **Privacy First**: Runs entirely locally - no tracking, no network requests
 
 ## Installation
+
+**👉 [Visit the GitHub Pages site](https://zerosonesfun.github.io/drcache/) for the easiest installation with drag-to-bookmark functionality!**
+
+Or manually:
 
 1. Copy the entire contents of `minified.js`
 2. Create a new bookmark in your browser
@@ -122,7 +130,12 @@ Contributions, issues, and feature requests are welcome!
 
 ## Support
 
-If you encounter any issues or have questions, please open an issue on GitHub.
+If you encounter any issues or have questions, please open an issue on [GitHub](https://github.com/zerosonesfun/drcache).
+
+## Links
+
+- 🌐 **[GitHub Pages Site](https://zerosonesfun.github.io/drcache/)** - Interactive installation page with drag-to-bookmark
+- 📦 **[Repository](https://github.com/zerosonesfun/drcache)** - Source code and documentation
 
 ---
 
